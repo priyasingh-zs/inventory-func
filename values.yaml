@@ -1,0 +1,12 @@
+name: samp-func
+cluster_name: testing-dev
+
+minCPU: "50m"
+maxCPU: "500m"
+minMemory: "50Mi"
+maxMemory: "50Mi"
+
+env:
+  cloud: GCP
+  TRACER_URL: http://tempo-distributor.tempo:9411  # url values changes depending on the environment
+  TRACER_EXPORTER: zipkin
