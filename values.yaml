@@ -1,5 +1,5 @@
-name: samp-func
-cluster_name: testing-dev
+name: order-data
+cluster_name: test-ingress-dev
 
 minCPU: "50m"
 maxCPU: "500m"

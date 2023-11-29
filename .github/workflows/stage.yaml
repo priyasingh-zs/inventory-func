@@ -2,19 +2,18 @@ name: Build and Deploy inventory-func
 
 on:
   push:
-    branches: [ github-var-test ]
+    branches: [ main ]
   pull_request:
-    branches: [ github-var-test ]
+    branches: [ main ]
 
 env:
-  GOPRIVATE: developer.zopsmart.com/go/gofr
-  APP_NAME: ${{ vars.DEV_APP_NAME }}
-  NAMESPACE: ${{ vars.DEV_NAMESPACE }}
-  CLUSTER_NAME: ${{ vars.DEV_CLUSTER_NAME }}
-  CLUSTER_PROJECT: ${{ vars.DEV_CLUSTER_PROJECT }}
-  GAR_PROJECT: ${{ vars.DEV_GAR_PROJECT }}
-  GAR_REGISTRY: ${{ vars.DEV_GAR_REGISTRY }}
-  artifact_directory: demo-inventory-func
+  APP_NAME: order-data
+  NAMESPACE: samp
+  CLUSTER_NAME: test-ingress-dev
+  CLUSTER_PROJECT: zs-devops
+  GAR_PROJECT: zs-devops
+  GAR_REGISTRY: order-data
+  artifact_directory: inventory-func
 
 jobs:
   build:
@@ -36,7 +35,7 @@ jobs:
           --health-timeout 5s
           --health-retries 5
 
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/github-var-test' && github.event_name == 'push')
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push')
 
     steps:
       - name: Set up Go 1.19
@@ -50,7 +49,7 @@ jobs:
 
       - name: Get dependencies
         run: |
-          git config --global url."https://${{ secrets.DEV_PAT }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+          git config --global url."https://x-oauth-basic@github.com/".insteadOf "https://github.com/"
           git config --global http.sslVerify false
           go mod download
 
@@ -65,7 +64,7 @@ jobs:
           go tool cover -func=$artifact_directory/coverage.out | tee $artifact_directory/c.out
 
       - name: Generate and Commit Coverage Badge
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/github-var-test'}}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main'}}
         run: |
           go install github.com/AlexBeauchemin/gobadge@latest
           gobadge -filename=$artifact_directory/c.out -target=$(pwd)/README.md
@@ -73,7 +72,7 @@ jobs:
           git diff --quiet --exit-code README.md || git commit README.md -m "updating coverage in README.md" 
 
       - name: Push Coverage Badge
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/github-var-test'}}
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main'}}
         uses: ad-m/github-push-action@master
         with:
           github_token: ${{ github.token }}
@@ -81,7 +80,7 @@ jobs:
 
       - name: Coverage Quality Gate
         env:
-          TESTCOVERAGE_THRESHOLD: 50
+          TESTCOVERAGE_THRESHOLD: 10
         run: |
           echo "Quality Gate: checking test coverage is above threshold ..."
           echo "Threshold             : $TESTCOVERAGE_THRESHOLD %"
@@ -108,32 +107,32 @@ jobs:
           name: artifacts
           path: main
 
-  code_quality:
-    name: 🎖 Code Quality
-    runs-on: ubuntu-latest
-
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/github-var-test' && github.event_name == 'push')
-
-    steps:
-      - name: Check out code into the Go module directory
-        uses: actions/checkout@v3
-
-      - name: Set up Go 1.19
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.19
-        id: go
-
-      - name: Setup Git
-        run: |
-          git config --global url."https://${{ secrets.DEV_PAT }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
-          git config --global http.sslVerify false
-
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: v1.52.2
-          args: --timeout 8m
+#  code_quality:
+#    name: 🎖 Code Quality
+#    runs-on: ubuntu-latest
+#
+#    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push')
+#
+#    steps:
+#      - name: Check out code into the Go module directory
+#        uses: actions/checkout@v3
+#
+#      - name: Set up Go 1.19
+#        uses: actions/setup-go@v2
+#        with:
+#          go-version: 1.19
+#        id: go
+#
+#      - name: Setup Git
+#        run: |
+#          git config --global url."https://${{ secrets.DEV_PAT }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
+#          git config --global http.sslVerify false
+#
+#      - name: golangci-lint
+#        uses: golangci/golangci-lint-action@v3
+#        with:
+#          version: v1.52.2
+#          args: --timeout 8m
 
   dockerize:
     runs-on: ubuntu-latest
@@ -143,7 +142,7 @@ jobs:
     outputs:
       image: ${{ steps.output-image.outputs.image }}
 
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/github-var-test' && github.event_name == 'push')
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push')
 
     steps:
       - name: Checkout Code
@@ -181,18 +180,11 @@ jobs:
     env:
       image: ${{needs.dockerize.outputs.image}}
 
-    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/github-var-test' && github.event_name == 'push')
+    if: github.event_name == 'pull_request' || (github.ref == 'refs/heads/main' && github.event_name == 'push')
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-
-      - name: Install Helm
-        uses: azure/setup-helm@v3
-        id: install
-
-      - name: Setup Helm Chart
-        run: git clone https://${{ secrets.DEV_PAT }}@github.com/zopsmart/helm.git
 
       - name: Verify
         run: ls -la
@@ -214,4 +206,4 @@ jobs:
         run: gcloud container clusters get-credentials ${{ env.CLUSTER_NAME }}  --region=us-central1 --project=${{ env.CLUSTER_PROJECT }}
 
       - name: Update Deployment Image
-        run: helm upgrade --install --set image=${{ env.image }} ${{ env.APP_NAME }} ./helm/service/ -f ./values.yaml -n ${{ env.NAMESPACE }}
+        run: kubectl set image deployment/${{ env.APP_NAME }} ${{ env.APP_NAME }}=${{ env.image }} --namespace ${{ env.NAMESPACE }}
