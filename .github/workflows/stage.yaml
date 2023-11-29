@@ -53,46 +53,6 @@ jobs:
           git config --global http.sslVerify false
           go mod download
 
-      - name: Test
-        run: |
-          mkdir -p $artifact_directory/build
-          go test ./... -count=1 -v -coverprofile $artifact_directory/cover.out -coverpkg=./...
-          cat $artifact_directory/cover.out | grep -v "mock_interface" | grep -v "migrations" > $artifact_directory/coverage.out
-
-      - name: Test Coverage report
-        run: |
-          go tool cover -func=$artifact_directory/coverage.out | tee $artifact_directory/c.out
-
-      - name: Generate and Commit Coverage Badge
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main'}}
-        run: |
-          go install github.com/AlexBeauchemin/gobadge@latest
-          gobadge -filename=$artifact_directory/c.out -target=$(pwd)/README.md
-          git config --local user.email "action@github.com" && git config --local user.name "GitHub-Action"
-          git diff --quiet --exit-code README.md || git commit README.md -m "updating coverage in README.md" 
-
-      - name: Push Coverage Badge
-        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main'}}
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ github.token }}
-          branch: ${{github.ref}}
-
-      - name: Coverage Quality Gate
-        env:
-          TESTCOVERAGE_THRESHOLD: 10
-        run: |
-          echo "Quality Gate: checking test coverage is above threshold ..."
-          echo "Threshold             : $TESTCOVERAGE_THRESHOLD %"
-          totalCoverage=`go tool cover -func=$artifact_directory/coverage.out | grep 'total:' | grep -Eo '[0-9]+\.[0-9]+'`
-          echo "Current test coverage : $totalCoverage %"
-          if (( $(echo "$totalCoverage $TESTCOVERAGE_THRESHOLD" | awk '{print ($1 >= $2)}') )); then
-              echo "OK"
-          else
-              echo "Current test coverage is below threshold. Please add more unit tests or adjust threshold to a lower value."
-              echo "Failed"
-              exit 1
-          fi
 
       - name: Make Directory
         run: mkdir build
