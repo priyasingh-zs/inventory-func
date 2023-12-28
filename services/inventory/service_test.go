@@ -27,7 +27,7 @@ func TestService_Get(t *testing.T) {
 
 	for i, tc := range tests {
 		app := gofr.New()
-		r := httptest.NewRequest(http.MethodGet, "/inventory", nil)
+		r := httptest.NewRequest(http.MethodGet, "/inventory", http.NoBody)
 		req := request.NewHTTPRequest(r)
 		ctx := gofr.NewContext(nil, req, app)
 

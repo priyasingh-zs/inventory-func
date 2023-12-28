@@ -45,7 +45,7 @@ func TestHandler_Index(t *testing.T) {
 
 	for i, tc := range tests {
 		app := gofr.New()
-		r := httptest.NewRequest(http.MethodGet, tc.url, nil)
+		r := httptest.NewRequest(http.MethodGet, tc.url, http.NoBody)
 		req := request.NewHTTPRequest(r)
 		ctx := gofr.NewContext(nil, req, app)
 

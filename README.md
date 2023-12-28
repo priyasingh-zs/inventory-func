@@ -1,1 +1,2 @@
-# inventory-func
+# inventory-api
+
