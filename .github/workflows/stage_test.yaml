@@ -26,6 +26,6 @@ jobs:
       - name: trigger the automated test
         uses: peter-evans/repository-dispatch@v2
         with:
-          token: ${{secrets.PAT}}
+          token: ${{secrets.TEST_PAT}}
           repository: zopsmart/test-paper-automation/.github/workflows/compiler_trigger.yml@main
           event-type: compiler_testing
