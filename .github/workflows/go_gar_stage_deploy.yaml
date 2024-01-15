@@ -129,8 +129,9 @@ jobs:
           echo "kind: ConfigMap" >> order-data-config-map.yaml
           echo "metadata:" >> order-data-config-map.yaml
           echo "  name: $CONFIG_MAP_NAME" >> order-data-config-map.yaml
+          echo "data: " >> order-data-config-map.yaml
           for key in "${!envArray[@]}"; do
-            echo "data:$key=${envArray[$key]}" >> order-data-config-map.yaml
+            echo "$key:${envArray[$key]}" >> order-data-config-map.yaml
           done
         shell: bash
 
