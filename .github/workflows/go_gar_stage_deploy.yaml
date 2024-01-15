@@ -162,6 +162,7 @@ jobs:
       - name: Read .stage.env File
         id: read-env
         run: |
+          CONFIG_MAP_NAME=my-config-map
           ENV_FILE_PATH=./.stage.env
           
           # Read the .env file and create a ConfigMap YAML dynamically
@@ -191,3 +192,6 @@ jobs:
             echo "$key=${envArray[$key]}" >> $GITHUB_ENV
           done
         shell: bash
+
+      - name: Update configmap
+        run: kubectl apply -f my-config-map.yaml -n default
