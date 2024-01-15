@@ -101,7 +101,7 @@ jobs:
       - name: Read .stage.env File
         id: read-env
         run: |
-          CONFIG_MAP_NAME=order-data-config-map
+          CONFIG_MAP_NAME=order-data-config-map1
           ENV_FILE_PATH=./.stage.env
           
           # Create an associative array to store key-value pairs
@@ -115,18 +115,18 @@ jobs:
           done < "$ENV_FILE_PATH"
           
           # Read the .env file and create a ConfigMap YAML dynamically
-          echo "apiVersion: v1" > order-data-config-map.yaml
-          echo "kind: ConfigMap" >> order-data-config-map.yaml
-          echo "metadata:" >> order-data-config-map.yaml
-          echo "  name: $CONFIG_MAP_NAME" >> order-data-config-map.yaml
-          echo "data:" >> order-data-config-map.yaml
+          echo "apiVersion: v1" > order-data-config-map1.yaml
+          echo "kind: ConfigMap" >> order-data-config-map1.yaml
+          echo "metadata:" >> order-data-config-map1.yaml
+          echo "  name: $CONFIG_MAP_NAME" >> order-data-config-map1.yaml
+          echo "data:" >> order-data-config-map1.yaml
           for key in "${!envArray[@]}"; do
-            echo "  $key: ${envArray[$key]}" >> order-data-config-map.yaml
+            echo "  $key: ${envArray[$key]}" >> order-data-config-map1.yaml
           done
         shell: bash
 
       - name: Echo YAML file content
-        run: cat order-data-config-map.yaml
+        run: cat order-data-config-map1.yaml
 
       - name: Update configmap
-        run: kubectl apply -f order-data-config-map.yaml -n sample --force
+        run: kubectl apply -f order-data-config-map1.yaml -n sample --force
