@@ -159,6 +159,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Set GCloud Project and Fetch Cluster Credentials
+        run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
+
       - name: Read .stage.env File
         id: read-env
         run: |
