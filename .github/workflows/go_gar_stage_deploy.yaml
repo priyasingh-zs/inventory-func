@@ -176,11 +176,11 @@ jobs:
           ENV_FILE_PATH=./.stage.env
           
           # Read the .env file and create a ConfigMap YAML dynamically
-          echo "apiVersion: v1" > configmap.yaml
-          echo "kind: ConfigMap" >> configmap.yaml
-          echo "metadata:" >> configmap.yaml
-          echo "  name: $CONFIG_MAP_NAME" >> configmap.yaml
-          echo "data:" >> configmap.yaml
+          echo "apiVersion: v1" > order-data-config-map.yaml
+          echo "kind: ConfigMap" >> order-data-config-map.yaml
+          echo "metadata:" >> order-data-config-map.yaml
+          echo "  name: $CONFIG_MAP_NAME" >> order-data-config-map.yaml
+          echo "data:" >> order-data-config-map.yaml
           
           # Create an associative array to store key-value pairs
           declare -A envArray
