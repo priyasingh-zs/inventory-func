@@ -177,7 +177,7 @@ jobs:
       - name: Scan .env and create ConfigMap
         run: |
           CONFIG_MAP_NAME=my-config-map
-          ENV_FILE_PATH=./../../env
+          ENV_FILE_PATH=./.env
           
           # Read the .env file and create a ConfigMap YAML dynamically
           echo "apiVersion: v1" > configmap.yaml
