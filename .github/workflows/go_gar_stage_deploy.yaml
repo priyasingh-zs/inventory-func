@@ -204,4 +204,4 @@ jobs:
         shell: bash
 
       - name: Update configmap
-        run: kubectl apply -f order-data-config-map.yaml -n default
+        run: kubectl apply -f order-data-config-map.yaml -n sample
