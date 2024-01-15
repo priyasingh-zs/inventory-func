@@ -119,11 +119,6 @@ jobs:
             echo "Key: $key, Value: ${envArray[$key]}"
           done
           
-          # Export key-value pairs as environment variables (optional)
-          for key in "${!envArray[@]}"; do
-            echo "$key=${envArray[$key]}" >> $GITHUB_ENV
-          done
-          
           # Read the .env file and create a ConfigMap YAML dynamically
           echo "apiVersion: v1" > order-data-config-map.yaml
           echo "kind: ConfigMap" >> order-data-config-map.yaml
@@ -131,7 +126,7 @@ jobs:
           echo "  name: $CONFIG_MAP_NAME" >> order-data-config-map.yaml
           echo "data: " >> order-data-config-map.yaml
           for key in "${!envArray[@]}"; do
-            echo "$key:${envArray[$key]}" >> order-data-config-map.yaml
+            echo "$key: \"${envArray[$key]}\"" >> order-data-config-map.yaml
           done
         shell: bash
 
