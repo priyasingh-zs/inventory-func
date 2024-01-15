@@ -39,4 +39,4 @@ jobs:
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
       PAT: ${{ secrets.DEV_PAT }}
-      GAR_KEY: ${{ secrets.DEV_DEPLOY_KEY }}
+      GAR_KEY: ${{ secrets.GAR_KEY }}
