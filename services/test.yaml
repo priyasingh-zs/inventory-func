@@ -1,0 +1,6 @@
+services:
+  samp-func:
+    configmap:
+      KEY1: "Value1"
+      KEY2: "Value2"
+      KEY3: "Value3"

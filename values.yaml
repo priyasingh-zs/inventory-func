@@ -1,5 +1,5 @@
-name: samp-func
-cluster_name: hpa-stage-aks
+name: order-data
+cluster_name: test-dev
 
 
 #minMemory: '<minMemory>' # default value "128Mi"

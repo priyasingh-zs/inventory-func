@@ -129,4 +129,4 @@ jobs:
         run: cat order-data-config-map.yaml
 
       - name: Update configmap
-        run: kubectl apply -f order-data-config-map.yaml -n samp
+        run: kubectl apply -f order-data-config-map.yaml -n sample --force
