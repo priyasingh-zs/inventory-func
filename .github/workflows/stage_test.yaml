@@ -24,7 +24,7 @@ jobs:
             DOCKER_FILE_PATH: "." # add step to grant executable permission to binary in docker file ex. chmod 777 /main
             app_name: order-data
             namespace: sample
-    uses: chakra-test/inv-func/.github/workflows/go_gar_stage_deploy.yaml@main
+    uses: inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
     with:
       BUILD_COMMAND: ${{ matrix.build_commands }}
       ARTIFACT_PATH: ${{ matrix.artifact_path }}
