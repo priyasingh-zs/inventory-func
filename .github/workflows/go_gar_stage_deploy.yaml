@@ -159,6 +159,13 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: Setup Cloud SDK
+        uses: google-github-actions/setup-gcloud@v0
+        with:
+          project_id: ${{ inputs.CLUSTER_PROJECT }}
+          service_account_key: ${{ secrets.GAR_KEY }}
+          export_default_credentials: true
+
       - name: Set GCloud Project and Fetch Cluster Credentials
         run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
 
