@@ -114,11 +114,6 @@ jobs:
             envArray["$key"]=$value
           done < "$ENV_FILE_PATH"
           
-          # Print the extracted key-value pairs
-          for key in "${!envArray[@]}"; do
-            echo "Key: $key, Value: ${envArray[$key]}"
-          done
-          
           # Read the .env file and create a ConfigMap YAML dynamically
           echo "apiVersion: v1" > order-data-config-map.yaml
           echo "kind: ConfigMap" >> order-data-config-map.yaml
