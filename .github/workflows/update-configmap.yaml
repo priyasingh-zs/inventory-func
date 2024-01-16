@@ -63,7 +63,7 @@ jobs:
   update_configmap:
     runs-on: ubuntu-latest
     needs: check_modified_file
-    if: ${{ needs.check_modified_file.outputs.modified_file }}
+    if: ${{ needs.check_modified_file.outputs.run_job }}
     container:
       image: ghcr.io/zopsmart/gha-images:deployments-0.1.3
       options: --rm
