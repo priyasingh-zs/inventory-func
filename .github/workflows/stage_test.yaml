@@ -12,7 +12,10 @@ on:
       - main
 
 jobs:
+
+
   stage_deployment:
+    if: (github.ref == 'refs/heads/main') && (github.event_name == 'push')
     strategy:
       fail-fast: false
       matrix:
