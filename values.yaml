@@ -1,5 +1,6 @@
 name: order-data
 cluster_name: test-dev
+secret_key_reference: ""
 
 
 #minMemory: '<minMemory>' # default value "128Mi"
