@@ -118,7 +118,6 @@ jobs:
 
   stage_deployment:
     runs-on: ubuntu-latest
-    if: (github.ref == 'refs/heads/development') && (github.event_name == 'push')
     needs: dockerize
     container:
       image: ghcr.io/zopsmart/gha-images:deployments-0.1.3
