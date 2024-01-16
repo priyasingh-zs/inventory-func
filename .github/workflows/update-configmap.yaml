@@ -42,15 +42,15 @@ jobs:
           echo "========== check paths of modified files =========="
           git diff --name-only HEAD^ HEAD > files.txt
           run_job=true
-  
+
           while IFS= read -r file
           do
             echo $file
-            if [[ "$file" != "configs/.stage.env" ]]; then
-            echo "This modified file is not under the 'db' folder."
-            run_job=false
-          fi
-            done < files.txt
+            if [[ "$file" != "configs/"* ]]; then
+              echo "This modified file is not under the 'configs' folder."
+              run_job=false
+            fi
+          done < files.txt
 
           # Set the output based on the condition after checking all files
           if [ "$run_job" = false ]; then
@@ -58,6 +58,7 @@ jobs:
           else
             echo "::set-output name=run_job::true"
           fi
+  
 
   update_configmap:
     runs-on: ubuntu-latest
