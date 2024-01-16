@@ -82,7 +82,7 @@ jobs:
       ENV_FILE_NAME: ./configs/.stage.env
       CLUSTER_PROJECT: modified-fabric-408810
       CLUSTER_NAME: test-dev
-      NAMESPACE: sample
+      NAMESPACE: test
     secrets:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
