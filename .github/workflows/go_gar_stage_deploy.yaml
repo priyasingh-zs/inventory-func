@@ -75,6 +75,15 @@ on:
         required: true
 
 jobs:
+  dockerize:
+    runs-on: ubuntu-latest
+    needs: [ build ]
+    outputs:
+      image: ${{ steps.output-image.outputs.image }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
   update_configmap:
     uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@main
