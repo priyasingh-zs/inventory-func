@@ -12,6 +12,14 @@ on:
       - main
 
 jobs:
+  update_configmap:
+   uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@main
+   with:
+     APP_NAME: order-data
+     ENV_FILE_NAME: ./configs/.stage.env
+   secrets:
+     DEPLOY_KEY: ${{ secrets.GAR_KEY }}
+
   stage_deployment:
     if: (github.ref == 'refs/heads/main') && (github.event_name == 'push')
     strategy:

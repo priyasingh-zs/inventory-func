@@ -77,6 +77,34 @@ on:
 
 
 jobs:
+  dockerize:
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.output-image.outputs.image }}
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # List of files that are added or modified in the commit
+      - id: files
+        uses: masesgroup/retrieve-changed-files@v2
+      - run: |
+          for added_modified_file in ${{ steps.files.outputs.all }}; do
+            echo ${added_modified_file}
+          done
+
+      - id: sort
+        run: |
+          readarray -td $'\0' sorted < <(
+                    for i in ${{ steps.files.outputs.all }};
+                    do     printf '%s %s\0' "${#i}" "$i";
+                    done |
+                            sort -bz -k1,1n -k2|
+                            cut -zd " " -f2-
+                    )
+          echo "files=`echo ${sorted[@]}`" >> "$GITHUB_OUTPUT"
+
   update_configmap:
     runs-on: ubuntu-latest
     container:
