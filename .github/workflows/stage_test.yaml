@@ -12,8 +12,6 @@ on:
       - main
 
 jobs:
-  dockerize:
-
   stage_deployment:
     strategy:
       fail-fast: false
