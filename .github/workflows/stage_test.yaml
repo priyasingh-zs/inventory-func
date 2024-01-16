@@ -40,5 +40,5 @@ jobs:
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
-      PAT: ${{ secrets.DEV_PAT }}
+      PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.GAR_KEY }}
