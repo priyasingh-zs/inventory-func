@@ -12,10 +12,9 @@ on:
       - main
 
 jobs:
-
+  dockerize:
 
   stage_deployment:
-    if: (github.ref == 'refs/heads/main') && (github.event_name == 'push')
     strategy:
       fail-fast: false
       matrix:
@@ -34,7 +33,7 @@ jobs:
       NAMESPACE: ${{ matrix.namespace }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
       GAR_PROJECT: modified-fabric-408810
-      GAR_REGISTRY: samp1
+      GAR_REGISTRY: order-data
       CLUSTER_PROJECT: modified-fabric-408810
       CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
