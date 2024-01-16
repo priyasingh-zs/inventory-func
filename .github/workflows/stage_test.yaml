@@ -17,6 +17,7 @@ jobs:
    with:
      APP_NAME: order-data
      ENV_FILE_NAME: ./configs/.stage.env
+     CLUSTER_PROJECT: test-dev
    secrets:
      DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 

@@ -10,7 +10,10 @@ on:
         description: 'env file name'
         required: false
         type: string
-        default: '1.20'
+      CLUSTER_PROJECT:
+        description: 'cluster name'
+        type: string
+        required: true
     secrets:
       DEPLOY_KEY:
         description: 'required input'
