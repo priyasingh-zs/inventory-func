@@ -63,6 +63,9 @@ jobs:
             echo "::set-output name=modified_files::false"
           fi
 
+      - name: print var modified_files
+        run: echo modified_files
+
   update_configmap:
     runs-on: ubuntu-latest
     needs: check_modified_file
@@ -75,6 +78,9 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
+
+      - name: print var modified_files
+        run: echo ${{ needs.check_modified_file.outputs.modified_file }}
 
       - name: Setup Cloud SDK
         uses: google-github-actions/setup-gcloud@v0
@@ -90,7 +96,7 @@ jobs:
         id: read-env
         run: |
           CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
-          ENV_FILE_PATH=./.stage.env
+          ENV_FILE_PATH=${{ inputs.ENV_FILE_NAME }}
 
           # Create an associative array to store key-value pairs
           declare -A envArray
