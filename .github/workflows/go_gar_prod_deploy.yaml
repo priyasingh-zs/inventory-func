@@ -103,7 +103,7 @@ jobs:
 
   update_configmap:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-    uses: chakra-test/inv-func/.github/workflows/update-configmap.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@main
     with:
       APP_NAME: ${{ inputs.APP_NAME }}
       ENV_FILE_PATH: ${{ inputs.ENV_FILE_PATH }}
