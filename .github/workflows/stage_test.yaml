@@ -5,40 +5,90 @@ on:
     types: [review_requested]
     branches:
       - main
+      - master
+      - development
   push:
     tags:
       - '*'
     branches:
       - main
+      - master
+      - development
 
 jobs:
+  test:
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@development
+    with:
+      POSTMAN_ENABLED: false
+      TESTCOVERAGE_THRESHOLD: 10
+      APP_NAME: order-data
+    secrets:
+      PAT: ${{ secrets.PAT }}
 
-
-  stage_deployment:
-    if: (github.ref == 'refs/heads/main') && (github.event_name == 'push')
+  build_dockerize:
+    needs: [ test ]
+    name: Build & dockerize
+    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
     strategy:
       fail-fast: false
       matrix:
         include:
           - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
             artifact_path: main
-            DOCKER_FILE_PATH: "." # add step to grant executable permission to binary in docker file ex. chmod 777 /main
-            app_name: samp1
-            namespace: test
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
+            DOCKER_FILE_PATH: "."
+            app_name: order-data
     with:
       BUILD_COMMAND: ${{ matrix.build_commands }}
       ARTIFACT_PATH: ${{ matrix.artifact_path }}
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
       APP_NAME: ${{ matrix.app_name }}
-      NAMESPACE: ${{ matrix.namespace }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
       GAR_PROJECT: modified-fabric-408810
-      GAR_REGISTRY: order-data
-      CLUSTER_PROJECT: modified-fabric-408810
-      CLUSTER_NAME: test-dev
-      HELM_VALUES_PATH: ./helm-values/stage.yaml
+      GAR_REGISTRY: samp1
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
       PAT: ${{ secrets.PAT }}
-      GAR_KEY: ${{ secrets.GAR_KEY }}
+      GAR_KEY: ${{ secrets.DEPLOY_KEY }}
+
+  stage_deployment:
+    needs: [ build_dockerize ]
+    name: Stage deploy
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app_name: order-data
+            namespace: sample
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
+    with:
+      APP_NAME: ${{ matrix.app_name }}
+      NAMESPACE: ${{ matrix.namespace }}
+      CLUSTER_PROJECT: modified-fabric-408810
+      CLUSTER_NAME: application-dev
+      HELM_VALUES_PATH: ./helm-values/stage.yaml
+      ENV_FILE_PATH: ./code-processor/configs/.stage.env
+    secrets:
+      PAT: ${{ secrets.PAT }}
+      GAR_KEY: ${{ secrets.DEPLOY_KEY }}
+
+  prod_deployment:
+    name: Prod deploy
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - app_name: order-data
+            namespace: sample
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@development
+    with:
+      APP_NAME: ${{ matrix.app_name }}
+      IMAGE_REGISTRY: us-central1-docker.pkg.dev
+      GAR_PROJECT: zs-devops
+      GAR_REGISTRY: order-data
+      CLUSTER_PROJECT: zs-devops
+      CLUSTER_NAME: test-dev
+      NAMESPACE: ${{ matrix.namespace }}
+      HELM_VALUES_PATH: ./helm-values/prod.yaml
+    secrets:
+      PAT: ${{ secrets.PAT }}
+      GAR_KEY: ${{ secrets.DEPLOY_KEY }}
