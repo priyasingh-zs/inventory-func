@@ -77,7 +77,8 @@ jobs:
 
       - name: print modified_files
         run: |
-          echo "Modified files: $GITHUB_OUTPUT"
+          echo "Modified files: ${{ jobs.check_modified_file.outputs.modified_file }}"
+          echo "Env Modified files: ${{ jobs.check_modified_file.outputs.env_modified_file }}"
 
   update_configmap:
     runs-on: ubuntu-latest
