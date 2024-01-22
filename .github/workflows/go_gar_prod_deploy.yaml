@@ -140,7 +140,6 @@ jobs:
             --password "${{ secrets.PAT }}" \
             "https://raw.githubusercontent.com/zopsmart/helm/main/charts"
 
-
       - name: Authorize to GCP service account
         uses: google-github-actions/auth@v1
         with:

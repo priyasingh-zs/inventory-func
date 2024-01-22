@@ -133,4 +133,3 @@ jobs:
 #
 #      - name: Update configmap
 #        run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}
-
