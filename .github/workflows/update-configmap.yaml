@@ -74,7 +74,6 @@ jobs:
             echo "modified_files=false" >> "$GITHUB_OUTPUT"
           fi
 
-
       - name: print modified_files
         run: |
           echo "Modified files: ${{ jobs.check_modified_file.outputs.modified_file }}"
