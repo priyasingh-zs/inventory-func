@@ -66,6 +66,7 @@ jobs:
       CLUSTER_PROJECT: modified-fabric-408810
       CLUSTER_NAME: testing-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
+      IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}

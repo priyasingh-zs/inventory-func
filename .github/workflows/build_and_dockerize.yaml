@@ -47,7 +47,10 @@ on:
         description: 'build arguments for DockerFile'
         required: false
         type: string
-
+    outputs:
+      IMAGE:
+        description: 'required input'
+        value: ${{ jobs.dockerize.outputs.image }}
     secrets:
       PAT:
         description: 'required input'
