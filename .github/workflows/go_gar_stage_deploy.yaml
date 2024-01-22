@@ -45,7 +45,6 @@ jobs:
     secrets:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
-
   stage_deployment:
     runs-on: ubuntu-latest
     if: (github.ref == 'refs/heads/development') && (github.event_name == 'push')

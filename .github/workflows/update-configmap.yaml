@@ -55,9 +55,9 @@ jobs:
             echo "modified_files=false" >> "$GITHUB_OUTPUT"
           fi
 
-
       - name: print modified_files
-        run: echo {{ jobs.check_modified_file.outputs.modified_file }}
+        run: |
+          echo "Modified files: $GITHUB_OUTPUT"
 
   update_configmap:
     runs-on: ubuntu-latest
