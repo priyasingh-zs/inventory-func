@@ -22,14 +22,6 @@ on:
         description: 'cluster name'
         type: string
         required: true
-      env_modified_file:
-        description: "only env files are modified or not"
-        type: string
-        required: true
-      modified_file:
-        description: "env with other files are modified or not"
-        type: string
-        required: true
     outputs:
       env_modified_file:
         description: "only env files are modified or not"
