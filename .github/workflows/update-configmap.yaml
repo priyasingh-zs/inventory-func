@@ -48,11 +48,15 @@ jobs:
       # Check if .stage.env or .prod.env is in the modified files
       - id: check_files
         run: |
-          if [[ $(git diff --name-only ${{ github.event.before }}..${{ github.sha }} | grep -E '\.(prod|stage)\.env') ]]; then
+          modified_files=$(git diff --name-only HEAD^ HEAD)
+          if [[ -n $(echo "$modified_files" | grep -E '(\.(prod|stage)\.env$)') ]]; then
              echo "modified_files=true" >> "$GITHUB_OUTPUT"
           else
             echo "modified_files=false" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: print modified_files
+        run: echo {{ jobs.check_modified_file.outputs.modified_file }}
 
   update_configmap:
     runs-on: ubuntu-latest
