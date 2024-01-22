@@ -39,6 +39,11 @@ jobs:
         with:
           fetch-depth: 2
 
+      - name: Get modified files
+        run: |
+          modified_files=$(git diff --name-only HEAD^ HEAD)
+          echo "Modified files: $modified_files"
+
       # Check if .stage.env or .prod.env is in the modified files
       - id: check_files
         run: |
@@ -108,3 +113,4 @@ jobs:
 
       - name: Update configmap
         run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}
+
