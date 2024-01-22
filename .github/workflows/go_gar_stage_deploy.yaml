@@ -31,7 +31,6 @@ on:
         description: 'required input'
         required: true
 
-
 jobs:
   update_configmap:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
