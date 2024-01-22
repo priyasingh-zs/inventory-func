@@ -74,7 +74,6 @@ jobs:
           echo "${{ steps.check_files.outputs.env_modified_files }}"
           echo "${{ steps.check_files.outputs.modified_files }}"
 
-
   update_configmap:
     runs-on: ubuntu-latest
     needs: check_modified_file
