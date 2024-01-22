@@ -44,6 +44,7 @@ jobs:
     secrets:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
+
   stage_deployment:
     needs: update_configmap
     runs-on: ubuntu-latest
