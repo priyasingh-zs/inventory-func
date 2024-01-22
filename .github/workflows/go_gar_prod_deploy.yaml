@@ -58,7 +58,6 @@ jobs:
         with:
           credentials_json: ${{ secrets.GAR_KEY }}
 
-
       - name: Check if tag exists
         id: tag-check
         run: |
