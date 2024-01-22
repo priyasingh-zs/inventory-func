@@ -49,7 +49,7 @@ jobs:
       - id: check_files
         run: |
           modified_files=$(git diff --name-only HEAD^ HEAD)
-          if [[ -n $(echo "$modified_files" | grep -E '(\.(prod|stage)\.env$)') ]]; then
+          if [[ $(echo "$modified_files" | grep -E '(\.(prod|stage)\.env$)') == "$modified_files" ]]; then
              echo "modified_files=true" >> "$GITHUB_OUTPUT"
           else
             echo "modified_files=false" >> "$GITHUB_OUTPUT"
