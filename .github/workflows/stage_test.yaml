@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@development
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@main
     with:
       POSTMAN_ENABLED: false
       TESTCOVERAGE_THRESHOLD: 10
@@ -28,7 +28,7 @@ jobs:
   build_dockerize:
     needs: [ test ]
     name: Build & dockerize
-    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
+    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@main
     strategy:
       fail-fast: false
       matrix:
@@ -59,7 +59,7 @@ jobs:
         include:
           - app_name: order-data
             namespace: sample
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
@@ -79,7 +79,7 @@ jobs:
         include:
           - app_name: order-data
             namespace: sample
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@development
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
