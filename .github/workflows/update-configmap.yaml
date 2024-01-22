@@ -57,12 +57,16 @@ jobs:
         run: |
           modified_files=$(git diff --name-only HEAD^ HEAD)
 
-          if [[ $(echo "$modified_files" | grep -E '(\.(prod|stage)\.env$)') == "$modified_files" ]]; then
+          if [[ $(echo "$modified_files" | grep -E '(\.(prod|stage)\.env$)' | wc -l) -eq 2 ]]; then
             echo "env_modified_files=true" >> "$GITHUB_OUTPUT"
           else
-            echo "env_modified_files=false" >> "$GITHUB_OUTPUT"
+            if [[ $(echo "$modified_files" | grep -E '(\.(prod|stage)\.env$)' | wc -l) -eq 1 ]]; then
+              echo "env_modified_files=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "env_modified_files=false" >> "$GITHUB_OUTPUT"
+            fi
           fi
-          
+  
           if [[ -n $(echo "$modified_files" | grep -Ev '(\.(prod|stage)\.env$)') ]]; then
             echo "modified_files=true" >> "$GITHUB_OUTPUT"
           else
