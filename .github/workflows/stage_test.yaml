@@ -66,7 +66,7 @@ jobs:
       CLUSTER_PROJECT: modified-fabric-408810
       CLUSTER_NAME: testing-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
-      ENV_FILE_PATH: ./code-processor/configs/.stage.env
+      ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
