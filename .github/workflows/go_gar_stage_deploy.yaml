@@ -60,6 +60,9 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
+      - name: print output
+        run: cat ${{ needs.update_configmap.outputs.modified_file }}
+
       - name: Setup Helm Chart
         run: git clone https://${{ secrets.PAT }}@github.com/zopsmart/helm.git
 
