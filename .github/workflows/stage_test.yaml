@@ -60,7 +60,7 @@ jobs:
         include:
           - app_name: order-data
             namespace: sample
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@devlopment
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
@@ -94,6 +94,7 @@ jobs:
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
       MODIFIED_FILE: ${{ needs.build_dockerize.outputs.MODIFIED_FILE }}
+      ENV_FILE_PATH: ./configs/.prod.env
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
