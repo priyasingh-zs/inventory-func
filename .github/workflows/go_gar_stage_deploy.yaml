@@ -51,7 +51,6 @@ jobs:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
   stage_deployment:
-    needs: check_modified_file
     runs-on: ubuntu-latest
     if: ${{ inputs.MODIFIED_FILE == 'true' }} && (github.event_name == 'push' && github.ref == 'refs/heads/development')
     container:
