@@ -37,6 +37,11 @@ jobs:
             artifact_path: main
             DOCKER_FILE_PATH: "."
             app_name: order-data
+
+          - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
+            artifact_path: main
+            DOCKER_FILE_PATH: "."
+            app_name: order-data-1
     with:
       BUILD_COMMAND: ${{ matrix.build_commands }}
       ARTIFACT_PATH: ${{ matrix.artifact_path }}
@@ -61,6 +66,9 @@ jobs:
           - app_name: order-data
             namespace: sample
             type: "deployment"
+          - app_name: order-data-1
+            namespace: sample
+            type: "cron"
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
@@ -71,7 +79,7 @@ jobs:
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
       TYPE: ${{ matrix.type }}
-      DEPLOYMENT_TYPE: "helm"
+      DEPLOYMENT_TYPE: "kubectl"
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
