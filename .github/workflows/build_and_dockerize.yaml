@@ -51,9 +51,6 @@ on:
       IMAGE:
         description: 'required input'
         value: ${{ jobs.dockerize.outputs.image }}
-      MODIFIED_FILE:
-        description: 'required input'
-        value: ${{ jobs.check_modified_file.outputs.modified_file }}
     secrets:
       PAT:
         description: 'required input'

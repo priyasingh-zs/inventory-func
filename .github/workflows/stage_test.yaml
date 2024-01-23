@@ -52,7 +52,6 @@ jobs:
 
 
   stage_deployment:
-    needs: [ build_dockerize ]
     name: Stage deploy
     strategy:
       fail-fast: false
@@ -68,7 +67,6 @@ jobs:
       CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
-      MODIFIED_FILE: ${{ needs.build_dockerize.outputs.MODIFIED_FILE }}
       ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}
