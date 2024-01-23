@@ -26,9 +26,6 @@ on:
       HELM_VALUES_PATH:
         type: string
         required: true
-      MODIFIED_FILE:
-        type: string
-        required: true
       ENV_FILE_PATH:
         description: 'env file path'
         required: false
