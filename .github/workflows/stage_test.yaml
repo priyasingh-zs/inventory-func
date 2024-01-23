@@ -38,10 +38,6 @@ jobs:
             DOCKER_FILE_PATH: "."
             app_name: order-data
 
-          - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
-            artifact_path: main
-            DOCKER_FILE_PATH: "."
-            app_name: order-data-1
     with:
       BUILD_COMMAND: ${{ matrix.build_commands }}
       ARTIFACT_PATH: ${{ matrix.artifact_path }}
@@ -94,9 +90,7 @@ jobs:
           - app_name: order-data
             namespace: sample
             type: "deployment"
-          - app_name: order-data-1
-            namespace: sample
-            type: "cron"
+
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
@@ -108,7 +102,7 @@ jobs:
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
       TYPE: ${{ matrix.type }}
-      DEPLOYMENT_TYPE: "kubectl"
+      DEPLOYMENT_TYPE: "helm"
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
