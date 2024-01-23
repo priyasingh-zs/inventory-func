@@ -43,7 +43,7 @@ jobs:
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: modified-fabric-408810
+      GAR_PROJECT: zs-devops
       GAR_REGISTRY: order-data
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
@@ -58,13 +58,13 @@ jobs:
       matrix:
         include:
           - app_name: order-data
-            namespace: samp
+            namespace: sample
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: modified-fabric-408810
-      CLUSTER_NAME: testing-dev
+      CLUSTER_PROJECT: zs-devops
+      CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env

@@ -35,6 +35,32 @@ on:
         required: true
 
 jobs:
+  check_modified_file:
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
+    runs-on: ubuntu-latest
+    outputs:
+      modified_file: ${{ steps.check_files.outputs.modified_files }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 2
+
+      # Check if .stage.env or .prod.env is in the modified files
+      - id: check_files
+        run: |
+          modified_files=$(git diff --name-only HEAD^ HEAD)
+          if [[ -n $(echo "$modified_files" | grep -Ev '(\.(prod|stage)\.env$)') ]]; then
+            echo "modified_files=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "modified_files=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: print modified_files
+        run: |
+          echo "${{ steps.check_files.outputs.modified_files }}"
+
   update_configmap:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
     uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@development
@@ -48,9 +74,8 @@ jobs:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
   stage_deployment:
-    needs: update_configmap
     runs-on: ubuntu-latest
-    if: ${{ needs.update_configmap.outputs.modified_file == 'true' }}
+    if: ${{ needs.check_modified_file.outputs.modified_file == 'true' }}
     container:
       image: ghcr.io/zopsmart/gha-images:deployments-0.1.3
       options: --rm
