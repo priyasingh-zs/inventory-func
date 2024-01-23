@@ -52,7 +52,6 @@ jobs:
 
 
   stage_deployment:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
     needs: [ build_dockerize ]
     name: Stage deploy
     strategy:
