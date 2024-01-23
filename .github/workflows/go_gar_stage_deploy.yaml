@@ -20,6 +20,9 @@ on:
       IMAGE:
         type: string
         required: true
+      MODIFIED_FILE:
+        type: string
+        required: true
       ENV_FILE_PATH:
         description: 'env file path'
         required: false
@@ -48,9 +51,8 @@ jobs:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
   stage_deployment:
-    needs: update_configmap
     runs-on: ubuntu-latest
-    if: ${{ needs.update_configmap.outputs.modified_file == 'true' }}
+    if: ${{ inputs.modified_file == 'true' }}
     container:
       image: ghcr.io/zopsmart/gha-images:deployments-0.1.3
       options: --rm

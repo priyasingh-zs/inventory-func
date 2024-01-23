@@ -50,6 +50,7 @@ jobs:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
 
+
   stage_deployment:
     needs: [ build_dockerize ]
     name: Stage deploy
@@ -58,15 +59,16 @@ jobs:
       matrix:
         include:
           - app_name: order-data
-            namespace: samp
+            namespace: sample
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: modified-fabric-408810
-      CLUSTER_NAME: testing-dev
+      CLUSTER_PROJECT: zs-devops
+      CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
+      MODIFIED_FILE: ${{ needs.build_dockerize.outputs.MODIFIED_FILE }}
       ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}
@@ -91,6 +93,7 @@ jobs:
       CLUSTER_NAME: test-dev
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
+      MODIFIED_FILE: ${{ needs.build_dockerize.outputs.MODIFIED_FILE }}
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
