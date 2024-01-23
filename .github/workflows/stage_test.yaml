@@ -50,6 +50,7 @@ jobs:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
 
+
   stage_deployment:
     needs: [ build_dockerize ]
     name: Stage deploy
