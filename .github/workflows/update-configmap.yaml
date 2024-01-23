@@ -23,9 +23,6 @@ on:
         type: string
         required: true
     outputs:
-      env_modified_file:
-        description: "only env files are modified or not"
-        value: ${{ jobs.check_modified_file.outputs.env_modified_file }}
       modified_file:
         description: "env with other files are modified or not"
         value: ${{ jobs.check_modified_file.outputs.modified_file }}
