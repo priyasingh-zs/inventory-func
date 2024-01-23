@@ -60,7 +60,7 @@ jobs:
         include:
           - app_name: order-data
             namespace: sample
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@devlopment
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
