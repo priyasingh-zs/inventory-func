@@ -52,7 +52,6 @@ jobs:
 
 
   stage_deployment:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
     needs: [ build_dockerize ]
     name: Stage deploy
     strategy:
@@ -77,7 +76,6 @@ jobs:
 
 
   prod_deployment:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     name: Prod deploy
     strategy:
       fail-fast: false
