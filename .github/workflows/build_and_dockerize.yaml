@@ -62,36 +62,8 @@ on:
 
 
 jobs:
-  check_modified_file:
-    name: Check other modified files
-    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
-    runs-on: ubuntu-latest
-    outputs:
-      modified_file: ${{ steps.check_files.outputs.modified_files }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 2
-
-      # Check if .stage.env or .prod.env is in the modified files
-      - id: check_files
-        run: |
-          modified_files=$(git diff --name-only HEAD^ HEAD)
-          if [[ -n $(echo "$modified_files" | grep -Ev '(\.(prod|stage)\.env$)') ]]; then
-            echo "modified_files=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "modified_files=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: print modified_files
-        run: |
-          echo "${{ steps.check_files.outputs.modified_files }}"
-
   build:
-    needs: check_modified_file
-    if: ${{ needs.check_modified_file.outputs.modified_file == 'true' }}
+    if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -129,8 +101,7 @@ jobs:
   dockerize:
     name: 🐳 Dockerize
     runs-on: ubuntu-latest
-    needs: [ build, check_modified_file ]
-    if: ${{ needs.check_modified_file.outputs.modified_file == 'true' }}
+    needs: build
     outputs:
       image: ${{ steps.output-image.outputs.image }}
 
