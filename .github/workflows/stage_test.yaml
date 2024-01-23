@@ -43,7 +43,7 @@ jobs:
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: modified-fabric-408810
+      GAR_PROJECT: zs-devops
       GAR_REGISTRY: order-data
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
