@@ -31,6 +31,9 @@ jobs:
   check_modified_file:
     name: Check env modified file
     runs-on: ubuntu-latest
+    outputs:
+      env_modified_file: ${{ steps.check_files.outputs.env_modified_files }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
