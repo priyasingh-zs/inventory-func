@@ -60,6 +60,7 @@ jobs:
         include:
           - app_name: order-data
             namespace: sample
+            type: "deployment"
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
@@ -68,8 +69,9 @@ jobs:
       CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
-      MODIFIED_FILE: ${{ needs.build_dockerize.outputs.MODIFIED_FILE }}
       ENV_FILE_PATH: ./configs/.stage.env
+      TYPE: ${{ matrix.type }}
+      DEPLOYMENT_TYPE: "helm"
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}

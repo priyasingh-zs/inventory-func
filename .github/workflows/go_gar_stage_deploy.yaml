@@ -20,8 +20,13 @@ on:
       IMAGE:
         type: string
         required: true
-      MODIFIED_FILE:
+      TYPE:
         type: string
+        description: "deployment or cron"
+        required: true
+      DEPLOYMENT_TYPE:
+        type: string
+        description: "kubectl or helm"
         required: true
       ENV_FILE_PATH:
         description: 'env file path'
@@ -37,10 +42,11 @@ on:
         description: 'required input'
         required: true
 
+
 jobs:
   update_configmap:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
-    uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@development
+    uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@main
     with:
       APP_NAME: ${{ inputs.APP_NAME }}
       ENV_FILE_PATH: ${{ inputs.ENV_FILE_PATH }}
@@ -52,7 +58,7 @@ jobs:
 
   stage_deployment:
     runs-on: ubuntu-latest
-    if: ${{ inputs.MODIFIED_FILE  && github.event_name == 'push' && github.ref == 'refs/heads/development' }}
+    if: (github.ref == 'refs/heads/development') && (github.event_name == 'push')
     container:
       image: ghcr.io/zopsmart/gha-images:deployments-0.1.3
       options: --rm
@@ -62,28 +68,41 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: print output
-        run: |
-          echo "a1=${{ inputs.MODIFIED_FILE }}"
-          echo "a2=${{ inputs.MODIFIED_FILE  && github.event_name == 'push' && github.ref == 'refs/heads/development' }}"
+      - name: Verify
+        run: ls -la
 
-#      - name: Setup Helm Chart
-#        run: git clone https://${{ secrets.PAT }}@github.com/zopsmart/helm.git
-#
-#      - name: Authorize to GCP service account
-#        uses: google-github-actions/auth@v1
-#        with:
-#          credentials_json: ${{ secrets.GAR_KEY }}
-#
-#      - name: Add Helm Repo
-#        run: |
-#          helm repo add helm \
-#            --username "${{ github.actor }}" \
-#            --password "${{ secrets.PAT }}" \
-#            "https://raw.githubusercontent.com/zopsmart/helm/main/charts"
-#
-#      - name: Set GCloud Project and Fetch Cluster Credentials
-#        run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
-#
-#      - name: Update Deployment Image
-#        run: helm upgrade --install --set image=${{ inputs.IMAGE }} ${{ inputs.APP_NAME }} helm/service -f ${{ inputs.HELM_VALUES_PATH }} -n ${{ inputs.NAMESPACE }} --version v0.1.4
+      - name: Directory
+        run: pwd
+
+      - name: Setup Helm Chart
+        run: git clone https://${{ secrets.PAT }}@github.com/zopsmart/helm.git
+
+      - name: Authorize to GCP service account
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GAR_KEY }}
+
+      - name: Add Helm Repo
+        if: ${{ inputs.DEPLOYMENT_TYPE == 'helm' }}
+        run: |
+          helm repo add helm \
+            --username "${{ github.actor }}" \
+            --password "${{ secrets.PAT }}" \
+            "https://raw.githubusercontent.com/zopsmart/helm/main/charts"
+
+      - name: Set GCloud Project and Fetch Cluster Credentials
+        run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
+
+      - name: Update Deployment Image
+        if: ${{ inputs.DEPLOYMENT_TYPE == 'helm' && inputs.TYPE == 'deployment' }}
+        run: helm upgrade --install --set image=${{ inputs.IMAGE }} ${{ inputs.APP_NAME }} helm/service -f ${{ inputs.HELM_VALUES_PATH }} -n ${{ inputs.NAMESPACE }} --version v0.1.4
+
+      - name: Update Deployment Image
+        if: ${{ inputs.DEPLOYMENT_TYPE == 'kubectl' && inputs.TYPE == 'deployment' }}
+        run: kubectl set image deployment/${{ inputs.APP_NAME }} ${{ inputs.APP_NAME }}=${{ inputs.IMAGE }} --namespace ${{ inputs.NAMESPACE }}
+
+      - name: Update Cron Image
+        if: ${{ inputs.DEPLOYMENT_TYPE == 'kubectl' && inputs.TYPE == 'cron' }}
+        run: kubectl set image cronjobs/${{ inputs.APP_NAME }} ${{ inputs.APP_NAME }}=${{ inputs.IMAGE }} --namespace ${{ inputs.NAMESPACE }}
+
+
