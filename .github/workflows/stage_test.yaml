@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@development
     with:
       POSTMAN_ENABLED: false
       TESTCOVERAGE_THRESHOLD: 10
@@ -28,7 +28,7 @@ jobs:
   build_dockerize:
     needs: [ test ]
     name: Build & dockerize
-    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
     strategy:
       fail-fast: false
       matrix:
@@ -44,7 +44,7 @@ jobs:
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
       GAR_PROJECT: modified-fabric-408810
-      GAR_REGISTRY: samp1
+      GAR_REGISTRY: order-data
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
       PAT: ${{ secrets.PAT }}
@@ -58,37 +58,41 @@ jobs:
       matrix:
         include:
           - app_name: order-data
-            namespace: sample
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
+            namespace: samp
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
       CLUSTER_PROJECT: modified-fabric-408810
-      CLUSTER_NAME: application-dev
+      CLUSTER_NAME: testing-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
-      ENV_FILE_PATH: ./code-processor/configs/.stage.env
+      IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
+      ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
 
+
   prod_deployment:
+    needs: [ build_dockerize ]
     name: Prod deploy
     strategy:
       fail-fast: false
       matrix:
         include:
-          - app_name: order-data
+          - app_name: samp-func
             namespace: sample
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: zs-devops
+      GAR_PROJECT: modified-fabric-408810
       GAR_REGISTRY: order-data
-      CLUSTER_PROJECT: zs-devops
-      CLUSTER_NAME: test-dev
+      CLUSTER_PROJECT: modified-fabric-408810
+      CLUSTER_NAME: testing-dev
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
+      IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
