@@ -29,6 +29,7 @@ on:
 
 jobs:
   check_modified_file:
+    name: Check env modified file
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code

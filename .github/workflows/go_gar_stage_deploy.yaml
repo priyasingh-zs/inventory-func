@@ -36,6 +36,7 @@ on:
 
 jobs:
   check_modified_file:
+    name: Check other modified files
     if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
     runs-on: ubuntu-latest
     outputs:
