@@ -7,12 +7,12 @@ on:
     branches: [test]
 
 env:
-  APP_NAME: ${{ vars.APP_NAME }}
-  NAMESPACE: ${{ vars.NAMESPACE }}
-  CLUSTER_NAME: ${{ vars.CLUSTER_NAME }}
-  CLUSTER_PROJECT: ${{ vars.CLUSTER_PROJECT }}
-  GAR_PROJECT: ${{ vars.GAR_PROJECT }}
-  GAR_REGISTRY: ${{ vars.GAR_REGISTRY }}
+  APP_NAME: order-data
+  NAMESPACE: sample
+  CLUSTER_NAME: event-test
+  CLUSTER_PROJECT: zs-devops
+  GAR_PROJECT: zs-devops
+  GAR_REGISTRY: order-data
 
 jobs:
   dockerize:
