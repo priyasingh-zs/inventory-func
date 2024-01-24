@@ -2,9 +2,9 @@ name: Build and Deploy for Go service
 
 on:
   push:
-    branches: [main]
+    branches: [test]
   pull_request:
-    branches: [main]
+    branches: [test]
 
 env:
   APP_NAME: ${{ vars.APP_NAME }}
