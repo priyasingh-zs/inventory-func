@@ -84,45 +84,45 @@ jobs:
         with:
           credentials_json: ${{ secrets.DEPLOY_KEY }}
 
-#      - name: Set GCloud Project and Fetch Cluster Credentials
-#        run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
-#
-#      - name: Read ENV Files
-#        id: read-env
-#        run: |
-#          CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
-#          ENV_FILE_PATH=${{ inputs.ENV_FILE_PATH }}
-#
-#          # Create an associative array to store key-value pairs
-#          declare -A envArray
-#
-#          # Read each line in .env and extract key-value pairs
-#          while IFS= read -r line || [[ -n "$line" ]]; do
-#            if [ -z "$line" ] || [ "${line:0:1}" == "#" ]; then
-#              continue
-#            fi
-#            key=$(echo "$line" | cut -d '=' -f 1)
-#            value=$(echo "$line" | cut -d '=' -f 2-)
-#            envArray["$key"]=$value
-#          done < "$ENV_FILE_PATH"
-#
-#          # Handle the case when the last line doesn't end with a newline character
-#          if [[ -n "$line" ]]; then
-#            key=$(echo "$line" | cut -d '=' -f 1)
-#            value=$(echo "$line" | cut -d '=' -f 2-)
-#            envArray["$key"]=$value
-#          fi
-#
-#          # Read the .env file and create a ConfigMap YAML dynamically
-#          echo "apiVersion: v1" > $CONFIG_MAP_NAME.yaml
-#          echo "kind: ConfigMap" >> $CONFIG_MAP_NAME.yaml
-#          echo "metadata:" >> $CONFIG_MAP_NAME.yaml
-#          echo "  name: $CONFIG_MAP_NAME" >> $CONFIG_MAP_NAME.yaml
-#          echo "data:" >> $CONFIG_MAP_NAME.yaml
-#          for key in "${!envArray[@]}"; do
-#            echo "  $key: ${envArray[$key]}" >> $CONFIG_MAP_NAME.yaml
-#          done
-#        shell: bash
-#
-#      - name: Update configmap
-#        run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}
+      - name: Set GCloud Project and Fetch Cluster Credentials
+        run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
+
+      - name: Read ENV Files
+        id: read-env
+        run: |
+          CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
+          ENV_FILE_PATH=${{ inputs.ENV_FILE_PATH }}
+
+          # Create an associative array to store key-value pairs
+          declare -A envArray
+
+          # Read each line in .env and extract key-value pairs
+          while IFS= read -r line || [[ -n "$line" ]]; do
+            if [ -z "$line" ] || [ "${line:0:1}" == "#" ]; then
+              continue
+            fi
+            key=$(echo "$line" | cut -d '=' -f 1)
+            value=$(echo "$line" | cut -d '=' -f 2-)
+            envArray["$key"]=$value
+          done < "$ENV_FILE_PATH"
+
+          # Handle the case when the last line doesn't end with a newline character
+          if [[ -n "$line" ]]; then
+            key=$(echo "$line" | cut -d '=' -f 1)
+            value=$(echo "$line" | cut -d '=' -f 2-)
+            envArray["$key"]=$value
+          fi
+
+          # Read the .env file and create a ConfigMap YAML dynamically
+          echo "apiVersion: v1" > $CONFIG_MAP_NAME.yaml
+          echo "kind: ConfigMap" >> $CONFIG_MAP_NAME.yaml
+          echo "metadata:" >> $CONFIG_MAP_NAME.yaml
+          echo "  name: $CONFIG_MAP_NAME" >> $CONFIG_MAP_NAME.yaml
+          echo "data:" >> $CONFIG_MAP_NAME.yaml
+          for key in "${!envArray[@]}"; do
+            echo "  $key: ${envArray[$key]}" >> $CONFIG_MAP_NAME.yaml
+          done
+        shell: bash
+
+      - name: Update configmap
+        run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}

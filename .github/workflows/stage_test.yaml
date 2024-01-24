@@ -98,7 +98,7 @@ jobs:
       GAR_PROJECT: zs-devops
       GAR_REGISTRY: order-data
       CLUSTER_PROJECT: zs-devops
-      CLUSTER_NAME: test-dev
+      CLUSTER_NAME: event-dev
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
       TYPE: ${{ matrix.type }}
