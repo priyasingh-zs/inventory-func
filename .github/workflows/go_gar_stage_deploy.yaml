@@ -74,8 +74,9 @@ jobs:
       - name: Directory
         run: pwd
 
-      - name: Setup Helm Chart
-        run: git clone https://${{ secrets.PAT }}@github.com/zopsmart/helm.git
+#      - name: Setup Helm Chart
+#        if: ${{ inputs.DEPLOYMENT_TOOL == 'helm' }}
+#        run: git clone https://${{ secrets.PAT }}@github.com/zopsmart/helm.git
 
       - name: Authorize to GCP service account
         uses: google-github-actions/auth@v1
