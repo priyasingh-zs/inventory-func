@@ -9,7 +9,7 @@ on:
 env:
   APP_NAME: order-data
   NAMESPACE: sample
-  CLUSTER_NAME: event-test
+  CLUSTER_NAME: event-dev
   CLUSTER_PROJECT: zs-devops
   GAR_PROJECT: zs-devops
   GAR_REGISTRY: order-data
