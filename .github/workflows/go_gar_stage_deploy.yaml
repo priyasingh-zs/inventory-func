@@ -46,7 +46,7 @@ on:
 jobs:
   update_configmap:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
-    uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@development
     with:
       APP_NAME: ${{ inputs.APP_NAME }}
       ENV_FILE_PATH: ${{ inputs.ENV_FILE_PATH }}
