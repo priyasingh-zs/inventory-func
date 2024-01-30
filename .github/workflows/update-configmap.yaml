@@ -90,7 +90,7 @@ jobs:
       - name: Read ENV Files
         id: read-env
         run: |
-          CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
+          CONFIG_MAP_NAME=${{ inputs.APP_NAME }}_test
           ENV_FILE_PATH=${{ inputs.ENV_FILE_PATH }}
 
           # Create an associative array to store key-value pairs
@@ -125,5 +125,5 @@ jobs:
         shell: bash
 
       - name: Update configmap
-        run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}
+        run: kubectl apply --force -f ${{ inputs.APP_NAME }}_test.yaml -n ${{ inputs.NAMESPACE }}
 
