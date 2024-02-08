@@ -36,7 +36,7 @@ jobs:
           - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
             artifact_path: main
             DOCKER_FILE_PATH: "."
-            app_name: samp
+            app_name: order-data
 
     with:
       BUILD_COMMAND: ${{ matrix.build_commands }}
@@ -44,8 +44,8 @@ jobs:
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: serene-unison-412013
-      GAR_REGISTRY: samp
+      GAR_PROJECT: zs-devops
+      GAR_REGISTRY: order-data
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
       PAT: ${{ secrets.PAT }}
@@ -59,7 +59,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - app_name: samp
+          - app_name: order-data
             namespace: sample
             type: "deployment"
 
@@ -67,8 +67,8 @@ jobs:
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: serene-unison-412013
-      CLUSTER_NAME: data-dev
+      CLUSTER_PROJECT: zs-devops
+      CLUSTER_NAME: testing-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
