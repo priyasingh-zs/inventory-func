@@ -1,5 +1,5 @@
-name: order-data
-cluster_name: test-dev
+name: samp-func
+cluster_name: certificate-dev
 secret_key_reference: ""
 
 
