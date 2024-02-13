@@ -36,7 +36,7 @@ jobs:
           - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
             artifact_path: main
             DOCKER_FILE_PATH: "."
-            app_name: order-data
+            app_name: samp
 
     with:
       BUILD_COMMAND: ${{ matrix.build_commands }}
@@ -44,8 +44,8 @@ jobs:
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: zs-devops
-      GAR_REGISTRY: order-data
+      GAR_PROJECT: serene-unison-412013
+      GAR_REGISTRY: samp
       SHA: ${{ needs.test.outputs.SHA }}
     secrets:
       PAT: ${{ secrets.PAT }}
@@ -59,16 +59,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - app_name: order-data
-            namespace: sample
+          - app_name: samp
+            namespace: pdbb
             type: "deployment"
 
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: zs-devops
-      CLUSTER_NAME: testing-dev
+      CLUSTER_PROJECT: serene-unison-412013
+      CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
@@ -85,16 +85,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - app_name: samp-func
-            namespace: sample
+          - app_name: samp
+            namespace: pdbb
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: modified-fabric-408810
-      GAR_REGISTRY: order-data
-      CLUSTER_PROJECT: modified-fabric-408810
-      CLUSTER_NAME: testing-dev
+      GAR_PROJECT: serene-unison-412013
+      GAR_REGISTRY: samp
+      CLUSTER_PROJECT: serene-unison-412013
+      CLUSTER_NAME: test-dev
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
     secrets:
