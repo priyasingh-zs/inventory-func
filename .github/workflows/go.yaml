@@ -136,7 +136,7 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: 🧪 Test and linters
+    name: Test and linters, Build, Dockerise & Update-configmap
     if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request' || github.event_name == 'push'
     outputs:
       sha: ${{ steps.output-sha.outputs.sha }}
