@@ -16,7 +16,8 @@ on:
       - development
 
 jobs:
-  test:
+  build:
+    name: "Test, Build, Dockerise and Update-configmap"
     uses: priyasingh-zs/inventory-func/.github/workflows/go.yaml@development
     strategy:
       fail-fast: false
@@ -75,6 +76,7 @@ jobs:
 
 
   stage_deployment:
+    needs: build
     name: Stage deploy
     strategy:
       fail-fast: false
