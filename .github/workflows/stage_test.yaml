@@ -17,18 +17,7 @@ on:
 
 jobs:
   test:
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@development
-    with:
-      POSTMAN_ENABLED: false
-      TESTCOVERAGE_THRESHOLD: 10
-      APP_NAME: order-data
-    secrets:
-      PAT: ${{ secrets.PAT }}
-
-  build_dockerize:
-    needs: [ test ]
-    name: Build & dockerize
-    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
+    uses: priyasingh-zs/inventory-func/.github/workflows/go.yaml@development
     strategy:
       fail-fast: false
       matrix:
@@ -37,8 +26,9 @@ jobs:
             artifact_path: main
             DOCKER_FILE_PATH: "."
             app_name: samp
-
     with:
+      POSTMAN_ENABLED: false
+      TESTCOVERAGE_THRESHOLD: 10
       BUILD_COMMAND: ${{ matrix.build_commands }}
       ARTIFACT_PATH: ${{ matrix.artifact_path }}
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
@@ -47,9 +37,36 @@ jobs:
       GAR_PROJECT: serene-unison-412013
       GAR_REGISTRY: samp
       SHA: ${{ needs.test.outputs.SHA }}
+      ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
+
+#  build_dockerize:
+#    needs: [ test ]
+#    name: Build & dockerize
+#    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
+#    strategy:
+#      fail-fast: false
+#      matrix:
+#        include:
+#          - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
+#            artifact_path: main
+#            DOCKER_FILE_PATH: "."
+#            app_name: samp
+#
+#    with:
+#      BUILD_COMMAND: ${{ matrix.build_commands }}
+#      ARTIFACT_PATH: ${{ matrix.artifact_path }}
+#      DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
+#      APP_NAME: ${{ matrix.app_name }}
+#      IMAGE_REGISTRY: us-central1-docker.pkg.dev
+#      GAR_PROJECT: serene-unison-412013
+#      GAR_REGISTRY: samp
+#      SHA: ${{ needs.test.outputs.SHA }}
+#    secrets:
+#      PAT: ${{ secrets.PAT }}
+#      GAR_KEY: ${{ secrets.DEPLOY_KEY }}
 
 
   stage_deployment:
