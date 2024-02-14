@@ -70,7 +70,6 @@ jobs:
 
 
   stage_deployment:
-    needs: [ build_dockerize ]
     name: Stage deploy
     strategy:
       fail-fast: false
