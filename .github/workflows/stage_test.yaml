@@ -27,7 +27,7 @@ jobs:
             artifact_path: main
             DOCKER_FILE_PATH: "."
             app_name: samp
-            namespace: pdbb
+            namespace: pdb
             type: "deployment"
     with:
       POSTMAN_ENABLED: false
@@ -84,7 +84,7 @@ jobs:
       matrix:
         include:
           - app_name: samp
-            namespace: pdbb
+            namespace: pdb
             type: "deployment"
 
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
