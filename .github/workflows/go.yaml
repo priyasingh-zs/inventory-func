@@ -94,9 +94,6 @@ on:
       NAMESPACE:
         type: string
         required: true
-      HELM_VALUES_PATH:
-        type: string
-        required: true
       DOCKER_FILE_PATH:
         description: 'path of docker file'
         required: true
