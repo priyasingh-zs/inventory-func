@@ -44,18 +44,6 @@ on:
 
 
 jobs:
-  update_configmap:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/development')
-    uses: priyasingh-zs/inventory-func/.github/workflows/update-configmap.yaml@development
-    with:
-      APP_NAME: ${{ inputs.APP_NAME }}
-      ENV_FILE_PATH: ${{ inputs.ENV_FILE_PATH }}
-      CLUSTER_PROJECT: ${{ inputs.CLUSTER_PROJECT }}
-      CLUSTER_NAME: ${{ inputs.CLUSTER_NAME }}
-      NAMESPACE: ${{ inputs.NAMESPACE }}
-    secrets:
-      DEPLOY_KEY: ${{ secrets.GAR_KEY }}
-
   stage_deployment:
     runs-on: ubuntu-latest
     if: (github.ref == 'refs/heads/development') && (github.event_name == 'push')
