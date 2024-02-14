@@ -26,6 +26,8 @@ jobs:
             artifact_path: main
             DOCKER_FILE_PATH: "."
             app_name: samp
+            namespace: pdbb
+            type: "deployment"
     with:
       POSTMAN_ENABLED: false
       TESTCOVERAGE_THRESHOLD: 10
@@ -36,6 +38,9 @@ jobs:
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
       GAR_PROJECT: serene-unison-412013
       GAR_REGISTRY: samp
+      NAMESPACE: ${{ matrix.namespace }}
+      CLUSTER_PROJECT: serene-unison-412013
+      CLUSTER_NAME: test-dev
       SHA: ${{ needs.test.outputs.SHA }}
       ENV_FILE_PATH: ./configs/.stage.env
     secrets:
