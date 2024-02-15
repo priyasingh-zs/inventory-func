@@ -302,19 +302,19 @@ jobs:
           fi
 
       - name: Run Server
-        if: ${{ inputs.POSTMAN_ENABLED }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
+        if: ${{ inputs.POSTMAN_ENABLED == 'true' }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           GOFR_ENV=test go run main.go &
           sleep 30
 
       - name: Install newman and Run Postman Collection
-        if: ${{ inputs.POSTMAN_ENABLED }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
+        if: ${{ inputs.POSTMAN_ENABLED == 'true' }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           npm install -g newman
           newman run postman-collections/${{ inputs.APP_NAME }}.postman-collection.json
 
       - name: Stop Server
-        if: ${{ inputs.POSTMAN_ENABLED }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
+        if: ${{ inputs.POSTMAN_ENABLED == 'true' }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: pkill main
 
 
@@ -361,11 +361,14 @@ jobs:
           tags: ${{ inputs.IMAGE_REGISTRY }}/${{ inputs.GAR_PROJECT }}/${{ inputs.GAR_REGISTRY }}/${{ inputs.APP_NAME }}:${{ steps.output-sha.outputs.sha }}
           build-args: |
             ${{ inputs.BUILD_ARGUMENTS }}
-      - id: output-image
+
+      - name: Output image
+        id: output-image
         run: echo "image=`echo  ${{ inputs.IMAGE_REGISTRY }}/${{ inputs.GAR_PROJECT }}/${{ inputs.GAR_REGISTRY }}/${{ inputs.APP_NAME }}:${{ steps.output-sha.outputs.sha }}`" >> "$GITHUB_OUTPUT"
 
 
-      - id: check_files
+      - name: Checked modified files
+        id: check_files
         if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
         run: |
           if [[ $(git diff --name-only ${{ github.event.before }}..${{ github.sha }} | grep -E '\.(prod|stage)\.env') ]]; then
