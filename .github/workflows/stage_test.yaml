@@ -62,15 +62,12 @@ jobs:
           - app_name: order-data
             namespace: sample
             type: "deployment"
-          - app_name: order-data-1
-            namespace: sample
-            type: "cron"
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
       CLUSTER_PROJECT: zs-devops
-      CLUSTER_NAME: test-dev
+      CLUSTER_NAME: volume-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env

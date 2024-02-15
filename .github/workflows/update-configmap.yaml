@@ -161,4 +161,5 @@ jobs:
         shell: bash
 
       - name: Update configmap
+        if: ${{ steps.check_files.outputs.modified_files == 'true' }}
         run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}
