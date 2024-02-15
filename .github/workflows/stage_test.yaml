@@ -73,6 +73,7 @@ jobs:
       ENV_FILE_PATH: ./configs/.stage.env
       TYPE: ${{ matrix.type }}
       DEPLOYMENT_TYPE: "kubectl"
+      SERVICE_TYPE: "react"
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}

@@ -22,6 +22,10 @@ on:
         description: 'cluster name'
         type: string
         required: true
+      SERVICE_TYPE:
+        description: 'service type'
+        type: string
+        required: false
     secrets:
       DEPLOY_KEY:
         description: 'required input'
@@ -76,28 +80,28 @@ jobs:
       - name: Set GCloud Project and Fetch Cluster Credentials
         run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
 
-      - name: List ConfigMaps in Kubernetes
-        run: |
-          kubectl get configmaps -n ${{ inputs.NAMESPACE }} -o=json > configmaps.json
-
-      - name: list configmaps
-        run: cat configmaps.json
-
-      - name: Check Specific ConfigMap
-        id: check-configmap
-        run: |
-          # Parse configmaps.json to find specific ConfigMap
-          if grep -q ${{ inputs.APP_NAME }} configmaps.json; then
-            echo "check_configmap=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "check_configmap=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: print check_configmap
-        run: echo ${{ steps.check-configmap.outputs.check_configmap }}
+#      - name: List ConfigMaps in Kubernetes
+#        run: |
+#          kubectl get configmaps -n ${{ inputs.NAMESPACE }} -o=json > configmaps.json
+#
+#      - name: list configmaps
+#        run: cat configmaps.json
+#
+#      - name: Check Specific ConfigMap
+#        id: check-configmap
+#        run: |
+#          # Parse configmaps.json to find specific ConfigMap
+#          if grep -q ${{ inputs.APP_NAME }} configmaps.json; then
+#            echo "check_configmap=true" >> "$GITHUB_OUTPUT"
+#          else
+#            echo "check_configmap=false" >> "$GITHUB_OUTPUT"
+#          fi
+#
+#      - name: print check_configmap
+#        run: echo ${{ steps.check-configmap.outputs.check_configmap }}
 
       - name: Read ENV Files
-        if: ${{ steps.check-configmap.outputs.check_configmap == 'false' }}
+        if: ${{ inputs.SERVICE_TYPE == 'react' }}
         id: read-env
         run: |
           CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
@@ -134,9 +138,9 @@ jobs:
           done
         shell: bash
 
-      - name: Mount configmap as volume
-        if: ${{ steps.check-configmap.outputs.check_configmap == 'true' }}
-        id: mount-configmap
+      - name: Configmap for React services
+        if: ${{ inputs.SERVICE_TYPE == 'react' }}
+        id: react-service-configmap
         run: |
           CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
           ENV_FILE_PATH=${{ inputs.ENV_FILE_PATH }}
@@ -150,8 +154,9 @@ jobs:
           echo "  environment.js: |" >> $CONFIG_MAP_NAME.yaml
           echo "    window.env = {" >> $CONFIG_MAP_NAME.yaml
           for key in "${!envArray[@]}"; do
-            echo "  $key: ${envArray[$key]}" >> $CONFIG_MAP_NAME.yaml
+            echo "  $key: ${envArray[$key]}," >> $CONFIG_MAP_NAME.yaml
           done
+          echo "    }" >> $CONFIG_MAP_NAME.yaml
         shell: bash
 
       - name: Update configmap
