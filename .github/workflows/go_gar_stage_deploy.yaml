@@ -33,10 +33,11 @@ on:
         required: false
         type: string
         default: "./configs/.stage.env"
-      SERVICE_TYPE:
+      REACT_APP:
         description: 'service type'
-        type: string
+        type: boolean
         required: false
+        default: false
 
     secrets:
       PAT:
