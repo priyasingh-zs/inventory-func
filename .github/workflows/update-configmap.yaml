@@ -65,12 +65,13 @@ jobs:
         id: check_files
         run: |
           if [[ $(git diff --name-only ${{ github.event.before }}..${{ github.sha }} | grep -E '\.(prod|stage)\.env') ]]; then             echo "::set-output name=modified_files::true"
+            echo "modified_files=true" >> $GITHUB_ENV
           else
-            echo "::set-output name=modified_files::false"
+            echo "modified_files=false" >> $GITHUB_ENV
           fi
 
       - name: print modified_files
-        run: echo ${{ needs.check-files.outputs.modified_files }}
+        run: echo "Modified files- ${{ env.modified_files }}"
 
       - name: Authorize to GCP service account
         if: ${{ needs.check-files.outputs.modified_files == 'true'}}
