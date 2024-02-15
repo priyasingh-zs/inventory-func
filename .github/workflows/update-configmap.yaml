@@ -81,26 +81,6 @@ jobs:
       - name: Set GCloud Project and Fetch Cluster Credentials
         run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
 
-#      - name: List ConfigMaps in Kubernetes
-#        run: |
-#          kubectl get configmaps -n ${{ inputs.NAMESPACE }} -o=json > configmaps.json
-#
-#      - name: list configmaps
-#        run: cat configmaps.json
-#
-#      - name: Check Specific ConfigMap
-#        id: check-configmap
-#        run: |
-#          # Parse configmaps.json to find specific ConfigMap
-#          if grep -q ${{ inputs.APP_NAME }} configmaps.json; then
-#            echo "check_configmap=true" >> "$GITHUB_OUTPUT"
-#          else
-#            echo "check_configmap=false" >> "$GITHUB_OUTPUT"
-#          fi
-#
-#      - name: print check_configmap
-#        run: echo ${{ steps.check-configmap.outputs.check_configmap }}
-
       - name: print react_app
         run: echo ${{ inputs.REACT_APP }}
 
