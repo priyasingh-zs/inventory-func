@@ -17,7 +17,7 @@ on:
 
 jobs:
   test:
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@development
     with:
       POSTMAN_ENABLED: false
       TESTCOVERAGE_THRESHOLD: 10
@@ -28,7 +28,7 @@ jobs:
   build_dockerize:
     needs: [ test ]
     name: Build & dockerize
-    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
     strategy:
       fail-fast: false
       matrix:
@@ -65,7 +65,7 @@ jobs:
           - app_name: order-data-1
             namespace: sample
             type: "cron"
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
