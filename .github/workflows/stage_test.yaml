@@ -16,9 +16,19 @@ on:
       - development
 
 jobs:
-  build:
-    name: "Test, Build, Dockerise and Update-configmap"
-    uses: priyasingh-zs/inventory-func/.github/workflows/go.yaml@development
+  test:
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_build.yaml@main
+    with:
+      POSTMAN_ENABLED: false
+      TESTCOVERAGE_THRESHOLD: 10
+      APP_NAME: order-data
+    secrets:
+      PAT: ${{ secrets.PAT }}
+
+  build_dockerize:
+    needs: [ test ]
+    name: Build & dockerize
+    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@main
     strategy:
       fail-fast: false
       matrix:
@@ -26,103 +36,74 @@ jobs:
           - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
             artifact_path: main
             DOCKER_FILE_PATH: "."
-            app_name: samp
-            namespace: pdb
-            type: "deployment"
+            app_name: order-data
+
     with:
-      POSTMAN_ENABLED: false
-      TESTCOVERAGE_THRESHOLD: 10
       BUILD_COMMAND: ${{ matrix.build_commands }}
       ARTIFACT_PATH: ${{ matrix.artifact_path }}
       DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: serene-unison-412013
-      GAR_REGISTRY: samp
-      NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: serene-unison-412013
-      CLUSTER_NAME: test-dev
+      GAR_PROJECT: zs-devops
+      GAR_REGISTRY: order-data
       SHA: ${{ needs.test.outputs.SHA }}
-      ENV_FILE_PATH: ./configs/.stage.env
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
 
-#  build_dockerize:
-#    needs: [ test ]
-#    name: Build & dockerize
-#    uses: priyasingh-zs/inventory-func/.github/workflows/build_and_dockerize.yaml@development
-#    strategy:
-#      fail-fast: false
-#      matrix:
-#        include:
-#          - build_commands: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o main
-#            artifact_path: main
-#            DOCKER_FILE_PATH: "."
-#            app_name: samp
-#
-#
-#    with:
-#      BUILD_COMMAND: ${{ matrix.build_commands }}
-#      ARTIFACT_PATH: ${{ matrix.artifact_path }}
-#      DOCKER_FILE_PATH: ${{ matrix.DOCKER_FILE_PATH }}
-#      APP_NAME: ${{ matrix.app_name }}
-#      IMAGE_REGISTRY: us-central1-docker.pkg.dev
-#      GAR_PROJECT: serene-unison-412013
-#      GAR_REGISTRY: samp
-#      SHA: ${{ needs.test.outputs.SHA }}
-#    secrets:
-#      PAT: ${{ secrets.PAT }}
-#      GAR_KEY: ${{ secrets.DEPLOY_KEY }}
-
 
   stage_deployment:
-    needs: build
+    needs: [ build_dockerize ]
     name: Stage deploy
     strategy:
       fail-fast: false
       matrix:
         include:
-          - app_name: samp
-            namespace: pdb
+          - app_name: order-data
+            namespace: sample
             type: "deployment"
-
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
+          - app_name: order-data-1
+            namespace: sample
+            type: "cron"
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: serene-unison-412013
+      CLUSTER_PROJECT: zs-devops
       CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
       TYPE: ${{ matrix.type }}
-      DEPLOYMENT_TYPE: "helm"
+      DEPLOYMENT_TYPE: "kubectl"
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
 
 
   prod_deployment:
+    needs: [ build_dockerize ]
     name: Prod deploy
     strategy:
       fail-fast: false
       matrix:
         include:
-          - app_name: samp
-            namespace: pdbb
-    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@development
+          - app_name: order-data
+            namespace: sample
+            type: "deployment"
+
+    uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_prod_deploy.yaml@main
     with:
       APP_NAME: ${{ matrix.app_name }}
       IMAGE_REGISTRY: us-central1-docker.pkg.dev
-      GAR_PROJECT: serene-unison-412013
-      GAR_REGISTRY: samp
-      CLUSTER_PROJECT: serene-unison-412013
-      CLUSTER_NAME: test-dev
+      GAR_PROJECT: zs-devops
+      GAR_REGISTRY: order-data
+      CLUSTER_PROJECT: zs-devops
+      CLUSTER_NAME: event-dev
       NAMESPACE: ${{ matrix.namespace }}
       HELM_VALUES_PATH: ./helm-values/prod.yaml
+      TYPE: ${{ matrix.type }}
+      DEPLOYMENT_TYPE: "helm"
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
-
-
