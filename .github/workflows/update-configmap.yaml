@@ -54,8 +54,6 @@ jobs:
             echo "modified_files=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: print modified_files
-        run: echo ${{ steps.check_files.outputs.modified_files }}
 
   update_configmap:
     name: Update Configmap
@@ -70,9 +68,6 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: print modified_files
-        run: echo ${{ needs.check_modified_file.outputs.modified_file }}
-
       - name: Authorize to GCP service account
         uses: google-github-actions/auth@v1
         with:
@@ -80,9 +75,6 @@ jobs:
 
       - name: Set GCloud Project and Fetch Cluster Credentials
         run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
-
-      - name: print react_app
-        run: echo ${{ inputs.REACT_APP }}
 
       - name: Read ENV Files
         if: ${{ !inputs.REACT_APP }}
@@ -124,7 +116,6 @@ jobs:
 
       - name: Configmap for React services
         if: ${{ inputs.REACT_APP }}
-        id: react-service-configmap
         run: |
           CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
           ENV_FILE_PATH=${{ inputs.ENV_FILE_PATH }}
