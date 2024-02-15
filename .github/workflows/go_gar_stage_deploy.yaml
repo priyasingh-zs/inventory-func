@@ -58,7 +58,7 @@ jobs:
       CLUSTER_PROJECT: ${{ inputs.CLUSTER_PROJECT }}
       CLUSTER_NAME: ${{ inputs.CLUSTER_NAME }}
       NAMESPACE: ${{ inputs.NAMESPACE }}
-      SERVICE_TYPE: ${{ inputs.SERVICE_TYPE }}
+      REACT_APP: ${{ inputs.REACT_APP }}
     secrets:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
