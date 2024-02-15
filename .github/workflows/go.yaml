@@ -127,17 +127,12 @@ on:
         description: 'required input'
         required: true
 
-    outputs:
-      SHA:
-        description: "commit sha for image"
-        value: ${{ jobs.test.outputs.sha }}
-
 
 jobs:
   test:
     runs-on: ubuntu-latest
-    name: Test and linters, Build, Dockerise & Update-configmap
-    if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request' || github.event_name == 'push'
+    name: 🧪 Test and linters
+    if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
     outputs:
       sha: ${{ steps.output-sha.outputs.sha }}
     services:
@@ -227,7 +222,7 @@ jobs:
           go-version: '${{ inputs.GO_VERSION }}'
 
       - name: Add DB Schema
-        if: ${{ inputs.ADD_SCHEMA }}
+        if: ${{ inputs.ADD_SCHEMA }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           ${{ inputs.SCHEMA_COMMAND }}
 
@@ -243,6 +238,7 @@ jobs:
           ${{ inputs.DEPENDENCIES_COMMAND }}
 
       - name: golangci-lint
+        if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         uses: golangci/golangci-lint-action@v3
         with:
           version: v1.54.2
@@ -252,12 +248,14 @@ jobs:
 
 
       - name: Test
+        if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           mkdir -p temp/build
           GOFR_ENV=test go test ./... -count=1 -v -coverprofile temp/cover.out -coverpkg=./...
           cat temp/cover.out | grep -v "mock_interface" | grep -v "migrations" > temp/coverage.out
 
       - name: Test Coverage report
+        if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           go tool cover -func=temp/coverage.out | tee temp/c.out
 
@@ -288,6 +286,7 @@ jobs:
           echo "sha=$sha" >> "$GITHUB_OUTPUT"
 
       - name: Coverage Quality Gate
+        if: (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           echo "Quality Gate: checking test coverage is above threshold ..."
           echo "Threshold             : ${{ inputs.TESTCOVERAGE_THRESHOLD }}%"
@@ -303,32 +302,21 @@ jobs:
           fi
 
       - name: Run Server
-        if: ${{ inputs.POSTMAN_ENABLED }}
+        if: ${{ inputs.POSTMAN_ENABLED }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           GOFR_ENV=test go run main.go &
           sleep 30
 
       - name: Install newman and Run Postman Collection
-        if: ${{ inputs.POSTMAN_ENABLED }}
+        if: ${{ inputs.POSTMAN_ENABLED }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: |
           npm install -g newman
           newman run postman-collections/${{ inputs.APP_NAME }}.postman-collection.json
 
       - name: Stop Server
-        if: ${{ inputs.POSTMAN_ENABLED }}
+        if: ${{ inputs.POSTMAN_ENABLED }} && (github.ref == 'refs/heads/development') || (github.ref == 'refs/heads/main')  || (github.ref == 'refs/heads/master') || github.event_name == 'pull_request'
         run: pkill main
 
-      - name: Get dependencies
-        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
-        run: |
-          git config --global url."https://${{ secrets.PAT }}:x-oauth-basic@github.com/".insteadOf "https://github.com/"
-          git config --global http.sslVerify false
-          go mod download
-
-      - name: Extra dependencies
-        if: ${{ inputs.EXTRA_DEPENDENCIES }}
-        run: |
-          ${{ inputs.DEPENDENCIES_COMMAND }}
 
       - name: Make Directory
         if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
@@ -378,6 +366,7 @@ jobs:
 
 
       - id: check_files
+        if: (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
         run: |
           if [[ $(git diff --name-only ${{ github.event.before }}..${{ github.sha }} | grep -E '\.(prod|stage)\.env') ]]; then
             echo "modified_files=true" >> "$GITHUB_OUTPUT"
@@ -386,17 +375,17 @@ jobs:
           fi
 
       - name: Authorize to GCP service account
-        if: ${{ steps.check_files.outputs.modified_files == 'true'}}
+        if: ${{ steps.check_files.outputs.modified_files == 'true'}} && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
         uses: google-github-actions/auth@v1
         with:
           credentials_json: ${{ secrets.DEPLOY_KEY }}
 
       - name: Set GCloud Project and Fetch Cluster Credentials
-        if: ${{ steps.check_files.outputs.modified_files == 'true'}}
+        if: ${{ steps.check_files.outputs.modified_files == 'true'}} && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
         run: gcloud container clusters get-credentials ${{ inputs.CLUSTER_NAME }} --region=us-central1 --project=${{ inputs.CLUSTER_PROJECT }}
 
       - name: Read ENV Files
-        if: ${{ steps.check_files.outputs.modified_files == 'true'}}
+        if: ${{ steps.check_files.outputs.modified_files == 'true'}} && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
         id: read-env
         run: |
           CONFIG_MAP_NAME=${{ inputs.APP_NAME }}
@@ -434,5 +423,5 @@ jobs:
         shell: bash
 
       - name: Update configmap
-        if: ${{ steps.check_files.outputs.modified_files == 'true'}}
+        if: ${{ steps.check_files.outputs.modified_files == 'true'}} && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/development') && (github.event_name == 'push')
         run: kubectl apply --force -f ${{ inputs.APP_NAME }}.yaml -n ${{ inputs.NAMESPACE }}
