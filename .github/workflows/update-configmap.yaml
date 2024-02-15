@@ -178,7 +178,7 @@ jobs:
           echo "  environment.js: |" >> $CONFIG_MAP_NAME.yaml
           echo "    window.env = {" >> $CONFIG_MAP_NAME.yaml
           for key in "${!envArray[@]}"; do
-            echo "  $key: ${envArray[$key]}," >> $CONFIG_MAP_NAME.yaml
+            echo "      $key: ${envArray[$key]}," >> $CONFIG_MAP_NAME.yaml
           done
           echo "    }" >> $CONFIG_MAP_NAME.yaml
         shell: bash
