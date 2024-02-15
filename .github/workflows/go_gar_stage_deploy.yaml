@@ -33,6 +33,10 @@ on:
         required: false
         type: string
         default: "./configs/.stage.env"
+      SERVICE_TYPE:
+        description: 'service type'
+        type: string
+        required: false
 
     secrets:
       PAT:
@@ -53,6 +57,7 @@ jobs:
       CLUSTER_PROJECT: ${{ inputs.CLUSTER_PROJECT }}
       CLUSTER_NAME: ${{ inputs.CLUSTER_NAME }}
       NAMESPACE: ${{ inputs.NAMESPACE }}
+      SERVICE_TYPE: ${{ inputs.SERVICE_TYPE }}
     secrets:
       DEPLOY_KEY: ${{ secrets.GAR_KEY }}
 
