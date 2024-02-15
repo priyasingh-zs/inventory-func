@@ -302,19 +302,19 @@ jobs:
           fi
 
       - name: Run Server
-        if: ${{ inputs.POSTMAN_ENABLED == 'true' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'  || (github.ref == 'refs/heads/master' || github.event_name == 'pull_request') }}
+        if: ${{ inputs.POSTMAN_ENABLED == 'true' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'  || github.ref == 'refs/heads/master' || github.event_name == 'pull_request') }}
         run: |
           GOFR_ENV=test go run main.go &
           sleep 30
 
       - name: Install newman and Run Postman Collection
-        if: ${{ inputs.POSTMAN_ENABLED == 'true' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'  || (github.ref == 'refs/heads/master' || github.event_name == 'pull_request') }}
+        if: ${{ inputs.POSTMAN_ENABLED == 'true' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'  || github.ref == 'refs/heads/master' || github.event_name == 'pull_request') }}
         run: |
           npm install -g newman
           newman run postman-collections/${{ inputs.APP_NAME }}.postman-collection.json
 
       - name: Stop Server
-        if: ${{ inputs.POSTMAN_ENABLED == 'true' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'  || (github.ref == 'refs/heads/master' || github.event_name == 'pull_request') }}
+        if: ${{ inputs.POSTMAN_ENABLED == 'true' && (github.ref == 'refs/heads/development' || github.ref == 'refs/heads/main'  || github.ref == 'refs/heads/master' || github.event_name == 'pull_request') }}
         run: pkill main
 
 
