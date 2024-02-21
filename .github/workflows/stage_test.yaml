@@ -59,21 +59,21 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - app_name: order-data
-            namespace: sample
+          - app_name: samp
+            namespace: monitoring
             type: "deployment"
     uses: priyasingh-zs/inventory-func/.github/workflows/go_gar_stage_deploy.yaml@development
     with:
       APP_NAME: ${{ matrix.app_name }}
       NAMESPACE: ${{ matrix.namespace }}
-      CLUSTER_PROJECT: zs-devops
-      CLUSTER_NAME: volume-dev
+      CLUSTER_PROJECT: ornate-oven-413106
+      CLUSTER_NAME: test-dev
       HELM_VALUES_PATH: ./helm-values/stage.yaml
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
       TYPE: ${{ matrix.type }}
       DEPLOYMENT_TYPE: "kubectl"
-#      REACT_APP: true
+      REACT_APP: true
     secrets:
       PAT: ${{ secrets.PAT }}
       GAR_KEY: ${{ secrets.DEPLOY_KEY }}
