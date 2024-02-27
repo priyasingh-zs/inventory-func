@@ -1,5 +1,5 @@
-name: samp-func
-cluster_name: certificate-dev
+name: order-data
+cluster_name: helm-dev
 secret_key_reference: ""
 
 
