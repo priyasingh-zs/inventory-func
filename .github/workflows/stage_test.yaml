@@ -25,6 +25,7 @@ jobs:
     secrets:
       PAT: ${{ secrets.PAT }}
 
+
   build_dockerize:
     needs: [ test ]
     name: Build & dockerize
