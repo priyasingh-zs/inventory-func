@@ -72,7 +72,7 @@ jobs:
       IMAGE: ${{ needs.build_dockerize.outputs.IMAGE }}
       ENV_FILE_PATH: ./configs/.stage.env
       TYPE: ${{ matrix.type }}
-      DEPLOYMENT_TYPE: "kubectl"
+      DEPLOYMENT_TYPE: "helm"
       REACT_APP: true
     secrets:
       PAT: ${{ secrets.PAT }}
